@@ -23,7 +23,20 @@ def saldo_conta():
     frame.to_sql('CARTEIRA_BINANCE', engine_carteira_binance, if_exists='replace', index=False)
 
 
-#ex. chamada direta na API para coleta de preço:
-PAR_MOEDA = 'BTCUSDT'
-btc_price = client.get_symbol_ticker(symbol=PAR_MOEDA)
+#Pegando todas as moedas e preços com pares em BTC e USDT na binance
+
+all_prices = pd.DataFrame(client.get_all_tickers())
+all_prices_tratado = []
+all_pair_btc = all_prices[all_prices['symbol'].apply(lambda x: x[-3:] == 'BTC')] #filtrando somente os pares de BTC
+all_pair_usdt = all_prices[all_prices['symbol'].apply(lambda x: x[-4:] == 'USDT')] #filtrando somente os pares de USDT
+all_prices_tratado.append(all_pair_btc)
+all_prices_tratado.append(all_pair_usdt)
+
+
+print(all_prices_tratado)
+
+
+
+
+
 

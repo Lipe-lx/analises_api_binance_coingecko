@@ -5,8 +5,14 @@ import pandas as pd
 
 #websocket.enableTrace(True) #descomente se for debugar
 engine_ws = sqlalchemy.create_engine('sqlite:///CESTA_MOEDAS_raw.db') #Chamada SQL
+
 time_char = '1m'
-pair_coins = f'ethusdt@kline_{time_char}/btcusdt@kline_{time_char}/bnbusdt@kline_{time_char}/ethbtc@kline_{time_char}'
+coin_01 = 'ethusdt'
+coin_02 = 'btcusdt'
+coin_03 = 'bnbusdt'
+coin_04 = 'ethbtc'
+
+pair_coins = f'{coin_01}@kline_{time_char}/{coin_02}@kline_{time_char}/{coin_03}@kline_{time_char}/{coin_04}@kline_{time_char}'
 
 def websocket_chamada():
         def on_open(ws):
@@ -28,7 +34,7 @@ def websocket_chamada():
                 df.close_time = pd.to_datetime(df.close_time, unit='ms')  #formatação de data
                 print(df) #visualizar o DF no terminal
 
-                #Salvando os dados no DbSQL
+                #Salvando os dados no SQL
                 frame = df
                 frame.to_sql('CESTA_MOEDAS', engine_ws, if_exists='append', index=False)
 
@@ -39,3 +45,4 @@ def websocket_chamada():
         SOCK = f"wss://stream.binance.com:9443/stream?streams={pair_coins}"
         ws = websocket.WebSocketApp(SOCK, on_open=on_open, on_close=on_close, on_message=on_message)
         ws.run_forever()
+

@@ -1,4 +1,4 @@
-from websocket_connection import engine_ws
+from websocket_connection_binance import engine_ws
 import pandas as pd
 from carteira_binance import engine_carteira_binance
 from pycoingecko import CoinGeckoAPI

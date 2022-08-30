@@ -27,5 +27,5 @@ carteira_binance_setada['locked'] = carteira_binance_setada['locked'].astype(flo
 
 carteira_binance_setada['saldo_USD'] = carteira_binance_setada['free'] * carteira_binance_setada['current_price']
 
-print(carteira_binance_setada)
+print(lista_moedas_CGK_rend)
 

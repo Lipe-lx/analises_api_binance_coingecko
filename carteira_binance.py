@@ -48,7 +48,7 @@ carteira_binance_pair_usdt = pd.merge(carteira_binance_setada_usdt, all_pair_usd
 carteira_binance_pair_usdt['symbol'] = carteira_binance_pair_usdt['symbol'].replace(['USDTUSDT', 'BUSDUSDT', 'BRLUSDT'], ['USDT', 'USDTBUSD', 'USDTBRL']) #Substitir valores especificos na linha
 
 print(carteira_binance_pair_btc)
-print(carteira_binance_pair_usdt)
+
 
 
 

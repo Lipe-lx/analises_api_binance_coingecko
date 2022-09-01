@@ -45,10 +45,10 @@ carteira_binance_pair_btc['symbol'] = carteira_binance_pair_btc['symbol'].replac
 
 
 carteira_binance_pair_usdt = pd.merge(carteira_binance_setada_usdt, all_pair_usdt, on=['symbol'], how='left') #PROCV no pandas, primeiro seleciona a planilha base, depois a planilha com os dados a se inserir, depois a coluna em comum setada com o mesmo nome e por ultimo a posição da coluna
-carteira_binance_pair_usdt['symbol'] = carteira_binance_pair_usdt['symbol'].replace(['USDTUSDT', 'BUSDUSDT', 'BRLUSDT'], ['USDT', 'USDTBUSD', 'USDTBRL']) #Substitir valores especificos na linha
+carteira_binance_pair_usdt['symbol'] = carteira_binance_pair_usdt['symbol'].replace(['USDTUSDT', 'BUSDUSDT', 'BRLUSDT'],['USDT', 'USDTBUSD', 'USDTBRL']) #Substitir valores especificos na linha
 
 print(carteira_binance_pair_btc)
-
+print(carteira_binance_pair_usdt)
 
 
 

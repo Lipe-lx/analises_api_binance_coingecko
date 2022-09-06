@@ -70,7 +70,6 @@ print(all_coins_and_fiat)
 
 print(carteira_binance_pair_usdt)
 
-#print(carteira_binance_pair_btc)
 
 
 

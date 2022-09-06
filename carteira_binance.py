@@ -23,37 +23,54 @@ def saldo_conta():
     frame.to_sql('CARTEIRA_BINANCE', engine_carteira_binance, if_exists='replace', index=False)
 
 
-# Pegando todas as moedas e preços com pares em BTC e USDT na binance
-all_prices = pd.DataFrame(client.get_all_tickers())
-all_pair_btc = all_prices[all_prices['symbol'].apply(lambda x: x[-3:] == 'BTC')] # filtrando somente os pares de BTC
-all_pair_usdt = all_prices[all_prices['symbol'].apply(lambda x: x[-4:] == 'USDT')] # filtrando somente os pares de USDT
+# CHAMADA EXTERNA - Pegando todas as moedas e preços com pares em BTC e USDT na binance
+# Moedas FIAT
+ticker_fiat_BTCUSDT = client.get_ticker(symbol='BTCUSDT')
+BTCUSDT_df = pd.DataFrame({'symbol': ticker_fiat_BTCUSDT['symbol'], 'price': ticker_fiat_BTCUSDT['lastPrice']}, index=[0])
+ticker_fiat_BTCBUSD = client.get_ticker(symbol='BTCBUSD')
+BTCBUSD_df = (pd.DataFrame({'symbol': ticker_fiat_BTCBUSD['symbol'], 'price': ticker_fiat_BTCBUSD['lastPrice']}, index=[0]))
+ticker_fiat_BTCUSDC = client.get_ticker(symbol='BTCUSDC')
+BTCUSDC_df = (pd.DataFrame({'symbol': ticker_fiat_BTCUSDC['symbol'], 'price': ticker_fiat_BTCUSDC['lastPrice']}, index=[0]))
+ticker_fiat_BTCBRL = client.get_ticker(symbol='BTCBRL')
+BTCBRL_df = (pd.DataFrame({'symbol': ticker_fiat_BTCBRL['symbol'], 'price': ticker_fiat_BTCBRL['lastPrice']}, index=[0]))
+ticker_fiat_USDTBRL = client.get_ticker(symbol='USDTBRL')
+USDTBRL_df = (pd.DataFrame({'symbol': ticker_fiat_USDTBRL['symbol'], 'price': ticker_fiat_USDTBRL['lastPrice']}, index=[0]))
+ticker_fiat_BUSDBRL = client.get_ticker(symbol='BUSDBRL')
+BUSDBRL_df = (pd.DataFrame({'symbol': ticker_fiat_BUSDBRL['symbol'], 'price': ticker_fiat_BUSDBRL['lastPrice']}, index=[0]))
+
+fiat = pd.concat([BTCBRL_df, BTCUSDC_df, BTCBUSD_df, BTCUSDT_df, USDTBRL_df, BUSDBRL_df], ignore_index=True)
+
+#Criptos
+all_coins = pd.DataFrame(client.get_all_tickers())
+all_coins_and_fiat = pd.concat([fiat, all_coins], ignore_index=True)
+#print(all_coins_and_fiat)
+
+all_pair_btc = all_coins[all_coins['symbol'].apply(lambda x: x[-3:] == 'BTC')] # filtrando somente os pares de BTC (tres ultimos caracteres)
+#verifica = 'planilha.xlsx'
+#all_pair_btc.to_excel(verifica)
+#print(all_pair_btc)
+all_pair_usdt = all_coins[all_coins['symbol'].apply(lambda x: x[-4:] == 'USDT')] # filtrando somente os pares de USDT (quatro ultimos caracteres)
 
 
-# Estruturando o DataFrame da carteira com valores
+# CHAMADA INTERNA Estruturando o DataFrame da carteira com valores
 # Chamar a função 'saldo_conta()' para atualizar o banco de dados
 
 carteira_binance_setada = pd.read_sql('CARTEIRA_BINANCE', engine_carteira_binance)
 carteira_binance_setada = carteira_binance_setada.rename(columns={'asset': 'symbol'}) # Setando o nome da coluna para realizar o merge (procv)
 
-carteira_binance_setada_btc = carteira_binance_setada.copy()
-carteira_binance_setada_btc['symbol'] = carteira_binance_setada_btc['symbol'] +'BTC' # adicionar BTC como ultimo caracter na coluna symbol (padronização dos dados)
+# Carteira em Dollar
 carteira_binance_setada_usdt = carteira_binance_setada.copy()
 carteira_binance_setada_usdt['symbol'] = (carteira_binance_setada_usdt['symbol'] +'USDT')# adicionar BTC como ultimo caracter na coluna symbol (sufixo) (padronização dos dados)
 
-carteira_binance_pair_btc = pd.merge(carteira_binance_setada_btc, all_pair_btc, on=['symbol'], how='left') # PROCV no pandas, primeiro seleciona a planilha base, depois a planilha com os dados a se inserir, depois a coluna em comum setada com o mesmo nome e por ultimo a posição da coluna
-carteira_binance_pair_btc['symbol'] = carteira_binance_pair_btc['symbol'].replace(['USDTBTC', 'BUSDBTC', 'BRLBTC'], ['BTCUSDT', 'BTCBUSD', 'BTCBRL']) #Substitir valores especificos na linha
+carteira_binance_setada_usdt['symbol'] = carteira_binance_setada_usdt['symbol'].replace(['USDTUSDT', 'BRLUSDT'], ['USDTBUSD', 'USDTBRL']) # Substitir valores especificos na linha
+carteira_binance_pair_usdt = pd.merge(carteira_binance_setada_usdt, all_coins_and_fiat, on=['symbol'], how='left') # PROCV no pandas, primeiro seleciona a planilha base, depois a planilha com os dados a se inserir, depois a coluna em comum setada com o mesmo nome e por ultimo a posição da coluna
 
 
-carteira_binance_pair_usdt = pd.merge(carteira_binance_setada_usdt, all_pair_usdt, on=['symbol'], how='left') # PROCV no pandas, primeiro seleciona a planilha base, depois a planilha com os dados a se inserir, depois a coluna em comum setada com o mesmo nome e por ultimo a posição da coluna
-carteira_binance_pair_usdt['symbol'] = carteira_binance_pair_usdt['symbol'].replace(['USDTUSDT', 'BUSDUSDT', 'BRLUSDT'], ['USDT', 'USDTBUSD', 'USDTBRL']) # Substitir valores especificos na linha
+print(all_coins_and_fiat)
 
-print(carteira_binance_pair_btc)
 print(carteira_binance_pair_usdt)
 
-
-
-
-
+#print(carteira_binance_pair_btc)
 
 
 
